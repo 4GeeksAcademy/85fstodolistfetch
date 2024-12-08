@@ -62,8 +62,9 @@ function Tarea() {
     }
 
     function borrarTarea(borrarItem) {
+        deleteTask(tarea)
         setListaTareas(listaTareas.filter((item) => item !== borrarItem))
-
+ 
     }
 
     return (
