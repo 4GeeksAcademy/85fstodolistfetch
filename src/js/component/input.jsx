@@ -9,6 +9,26 @@ function Tarea() {
     useEffect(() => {
         getTasks()
     }, []);
+    const createUser =() =>{
+        fetch("https://playground.4geeks.com/todo/users/Kevin", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+           
+        })
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+               getTasks()
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    
 
 
     const createTask = (task) => {
@@ -27,6 +47,7 @@ function Tarea() {
             })
             .then(data => {
                 console.log(data);
+                getTasks()
             })
             .catch(error => {
                 console.error(error);
@@ -36,18 +57,26 @@ function Tarea() {
     const getTasks = () => {
         fetch("https://playground.4geeks.com/todo/users/Kevin")
             .then(response => {
-                return response.json()
+               if (!response.ok) {
+                createUser()
+                
+               }
+               else {
+                return(response.json())
+               }
             })
             .then(data => {
+                console.log(data);
+                
                 setListaTareas(data.todos)
             })
             .catch(error => {
                 console.error(error);
             });
     }
-    const deleteTask =() => {
-        fetch('https://playground.4geeks.com/todo/todos/todo_id', { method: 'DELETE' })
-            .then(() => this.setListaTareas({ status: 'Delete successful' }));
+    const deleteTask =(id) => {
+        fetch(`https://playground.4geeks.com/todo/todos/${id}`, { method: 'DELETE' })
+            .then(() =>getTasks());
     }
 
     function agregarTareas(e) {
@@ -61,11 +90,11 @@ function Tarea() {
 
     }
 
-    function borrarTarea(borrarItem) {
-        deleteTask(tarea)
-        setListaTareas(listaTareas.filter((item) => item !== borrarItem))
+    // function borrarTarea(borrarItem) {
+    //     deleteTask(tarea)
+    //     setListaTareas(listaTareas.filter((item) => item !== borrarItem))
  
-    }
+    // }
 
     return (
         <div className="estilos">
@@ -75,7 +104,7 @@ function Tarea() {
             <ul>
 
                 {listaTareas.map((item, index) =>
-                    <li key={index}>{item.label}<svg onClick={() => borrarTarea(item)} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
+                    <li key={index}>{item.label}<svg onClick={() => deleteTask(item.id)} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x" viewBox="0 0 16 16">
                         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
                     </svg></li>
                 )}
